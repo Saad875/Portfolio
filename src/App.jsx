@@ -1,0 +1,536 @@
+import { useEffect, useState } from 'react'
+import Icon from './components/Icon.jsx'
+import Embers from './components/Embers.jsx'
+import {
+  profile, stats, skills, languages, experience, projects, education, certifications,
+} from './data.js'
+import {
+  useScrollReveal, useGlobalRipple, useTypewriter, useCountUp, tiltHandlers,
+  useActiveSection, useScrollProgress,
+} from './hooks.js'
+
+const NAV = [
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'education', label: 'Education' },
+  { id: 'contact', label: 'Contact' },
+]
+const NAV_IDS = NAV.map((n) => n.id)
+
+function Loader() {
+  const [done, setDone] = useState(false)
+  useEffect(() => {
+    const t = setTimeout(() => setDone(true), 1100)
+    return () => clearTimeout(t)
+  }, [])
+  return (
+    <div className={`loader ${done ? 'loader--done' : ''}`} aria-hidden="true">
+      <div className="loader__mark">
+        <span>M</span><span>S</span>
+      </div>
+      <div className="loader__bar"><i /></div>
+    </div>
+  )
+}
+
+function CursorGlow() {
+  useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    const el = document.querySelector('.cursor-glow')
+    const dot = document.querySelector('.cursor-dot')
+    let x = -500, y = -500, cx = -500, cy = -500, raf
+    const move = (e) => {
+      x = e.clientX
+      y = e.clientY
+      dot.style.transform = `translate(${x}px, ${y}px)`
+    }
+    const loop = () => {
+      cx += (x - cx) * 0.12
+      cy += (y - cy) * 0.12
+      el.style.transform = `translate(${cx}px, ${cy}px)`
+      raf = requestAnimationFrame(loop)
+    }
+    const over = (e) => {
+      const hit = e.target.closest('a, button, .hoverable')
+      document.body.classList.toggle('cursor-hover', !!hit)
+    }
+    window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerover', over, { passive: true })
+    loop()
+    document.body.classList.add('has-cursor')
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerover', over)
+    }
+  }, [])
+  return (
+    <>
+      <div className="cursor-glow" aria-hidden="true" />
+      <div className="cursor-dot" aria-hidden="true" />
+    </>
+  )
+}
+
+function Nav() {
+  const active = useActiveSection(NAV_IDS)
+  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 30)
+    on()
+    window.addEventListener('scroll', on, { passive: true })
+    return () => window.removeEventListener('scroll', on)
+  }, [])
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+  }, [open])
+
+  return (
+    <header className={`nav ${scrolled ? 'nav--scrolled' : ''}`}>
+      <div className="container nav__inner">
+        <a href="#home" className="brand" aria-label="Muhammad Saad, home">
+          <span className="brand__mark">MS</span>
+          <span className="brand__name">Muhammad<b>.</b>Saad</span>
+        </a>
+        <nav className={`nav__links ${open ? 'is-open' : ''}`} aria-label="Primary">
+          {NAV.map((n, i) => (
+            <a
+              key={n.id}
+              href={`#${n.id}`}
+              className={`nav__link ${active === n.id ? 'is-active' : ''}`}
+              style={{ '--i': i }}
+              onClick={() => setOpen(false)}
+            >
+              {n.label}
+            </a>
+          ))}
+          <a href={profile.cv} download className="btn btn--primary btn--sm ripple nav__cta" onClick={() => setOpen(false)}>
+            <Icon name="download" size={16} /> Resume
+          </a>
+        </nav>
+        <button
+          className={`burger ${open ? 'is-open' : ''}`}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+        >
+          <span /><span /><span />
+        </button>
+      </div>
+    </header>
+  )
+}
+
+function Hero() {
+  const typed = useTypewriter(profile.roles)
+  const tilt = tiltHandlers(10)
+  return (
+    <section id="home" className="hero">
+      <Embers />
+      <div className="hero__orb hero__orb--1" />
+      <div className="hero__orb hero__orb--2" />
+      <div className="container hero__grid">
+        <div className="hero__copy">
+          <p className="eyebrow hero-in" style={{ '--d': '1.2s' }}>
+            <span className="pulse-dot" /> Android Developer · {profile.location}
+          </p>
+          <h1 className="hero__title">
+            <span className="hero-in line" style={{ '--d': '1.3s' }}>Hi, I'm</span>
+            <span className="hero-in line gradient-text" style={{ '--d': '1.42s' }}>
+              {profile.name}
+            </span>
+          </h1>
+          <p className="hero__role hero-in" style={{ '--d': '1.55s' }}>
+            <span className="typed">{typed}</span><span className="caret" />
+          </p>
+          <p className="hero__lead hero-in" style={{ '--d': '1.68s' }}>
+            I build production Android apps in Kotlin with MVVM and Clean Architecture, ship faster with
+            AI-assisted development, and bring a React front-end background to every interface.
+          </p>
+          <div className="hero__actions hero-in" style={{ '--d': '1.8s' }}>
+            <a href="#projects" className="btn btn--primary ripple magnetic">
+              View my work <Icon name="arrow" size={18} />
+            </a>
+            <a href={profile.cv} download className="btn btn--ghost ripple magnetic">
+              <Icon name="download" size={18} /> Download CV
+            </a>
+          </div>
+          <div className="hero__social hero-in" style={{ '--d': '1.92s' }}>
+            <a href={profile.github} target="_blank" rel="noreferrer" className="social ripple" aria-label="GitHub">
+              <Icon name="github" />
+            </a>
+            <a href={profile.linkedin} target="_blank" rel="noreferrer" className="social ripple" aria-label="LinkedIn">
+              <Icon name="linkedin" />
+            </a>
+            <a href={`mailto:${profile.email}`} className="social ripple" aria-label="Email">
+              <Icon name="mail" />
+            </a>
+          </div>
+        </div>
+
+        <div className="hero__visual hero-in" style={{ '--d': '1.35s' }}>
+          <div className="portrait hoverable" {...tilt}>
+            <div className="portrait__ring" />
+            <div className="portrait__frame">
+              <img src={profile.photo} alt="Portrait of Muhammad Saad" width="640" height="640" />
+              <div className="portrait__shine" />
+            </div>
+            <div className="chip-float chip-float--1">
+              <Icon name="android" size={18} /> Kotlin · Android
+            </div>
+            <div className="chip-float chip-float--2">
+              <Icon name="spark" size={18} /> AI-assisted dev
+            </div>
+            <div className="chip-float chip-float--3">
+              <Icon name="layout" size={18} /> React
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="#about" className="scroll-cue" aria-label="Scroll to About">
+        <span className="scroll-cue__mouse"><i /></span>
+        <span>Scroll</span>
+      </a>
+    </section>
+  )
+}
+
+function SectionHead({ kicker, title, sub }) {
+  return (
+    <div className="section-head">
+      <p className="kicker" data-reveal="up">{kicker}</p>
+      <h2 className="section-title" data-reveal="up" style={{ '--delay': '80ms' }}>{title}</h2>
+      {sub && <p className="section-sub" data-reveal="up" style={{ '--delay': '160ms' }}>{sub}</p>}
+    </div>
+  )
+}
+
+function Stat({ value, label, i }) {
+  const [ref, v] = useCountUp(value)
+  return (
+    <div className="stat card spotlight hoverable" data-reveal="zoom" style={{ '--delay': `${i * 90}ms` }} ref={ref} {...tiltHandlers(8)}>
+      <span className="stat__num">{v}</span>
+      <span className="stat__label">{label}</span>
+    </div>
+  )
+}
+
+function About() {
+  return (
+    <section id="about" className="section">
+      <div className="container">
+        <SectionHead kicker="About me" title={<>Clean code, <span className="gradient-text">shipped fast</span></>} />
+        <div className="about">
+          <div className="about__text">
+            <p data-reveal="left">{profile.summary}</p>
+            <p data-reveal="left" style={{ '--delay': '100ms' }}>
+              At work I own features from R&amp;D and UI to QA-ready builds, across utility, productivity and AI apps,
+              with localization, crash reporting and monetization built in.
+            </p>
+            <ul className="about__facts" data-reveal="left" style={{ '--delay': '200ms' }}>
+              <li><Icon name="briefcase" size={18} /> Junior Android Developer at Trusted Technologies</li>
+              <li><Icon name="cap" size={18} /> BS Computer Science, UMT Lahore (2021–2025)</li>
+              <li><Icon name="pin" size={18} /> Based in {profile.location}</li>
+              <li><Icon name="globe" size={18} /> English, Urdu, Turkish</li>
+            </ul>
+          </div>
+          <div className="stats">
+            {stats.map((s, i) => <Stat key={s.label} {...s} i={i} />)}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Skills() {
+  return (
+    <section id="skills" className="section section--alt">
+      <div className="container">
+        <SectionHead
+          kicker="Skills"
+          title={<>The <span className="gradient-text">toolkit</span> I work with</>}
+          sub="From native Android to the web, plus the AI tools that help me ship faster."
+        />
+        <div className="skills">
+          {skills.map((g, i) => (
+            <article
+              key={g.group}
+              className="skill-card card spotlight hoverable"
+              data-reveal="up"
+              style={{ '--delay': `${(i % 3) * 110}ms` }}
+              {...tiltHandlers(6)}
+            >
+              <div className="skill-card__head">
+                <span className="icon-badge"><Icon name={g.icon} size={22} /></span>
+                <h3>{g.group}</h3>
+              </div>
+              <ul className="tags">
+                {g.items.map((t) => <li key={t} className="tag">{t}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+        <div className="langs card" data-reveal="up">
+          <h3><Icon name="globe" size={20} /> Languages</h3>
+          <div className="langs__list">
+            {languages.map((l) => (
+              <div key={l.name} className="lang">
+                <div className="lang__top"><span>{l.name}</span><em>{l.level}</em></div>
+                <div className="bar"><i style={{ '--w': `${l.pct}%` }} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Experience() {
+  return (
+    <section id="experience" className="section">
+      <div className="container">
+        <SectionHead kicker="Experience" title={<>Where I've <span className="gradient-text">worked</span></>} />
+        <ol className="timeline">
+          {experience.map((job, i) => (
+            <li key={job.role} className="timeline__item" data-reveal={i % 2 ? 'right' : 'left'}>
+              <span className={`timeline__dot ${job.current ? 'is-current' : ''}`} />
+              <article className="job card spotlight hoverable" {...tiltHandlers(3)}>
+                <header className="job__head">
+                  <div>
+                    <h3>{job.role}</h3>
+                    <p className="job__co">
+                      {job.company}{job.place ? `, ${job.place}` : ''}
+                    </p>
+                  </div>
+                  <span className={`pill ${job.current ? 'pill--live' : ''}`}>{job.period}</span>
+                </header>
+                <ul className="job__points">
+                  {job.points.map((p) => <li key={p}>{p}</li>)}
+                </ul>
+                <ul className="tags tags--sm">
+                  {job.tags.map((t) => <li key={t} className="tag">{t}</li>)}
+                </ul>
+              </article>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+function Projects() {
+  return (
+    <section id="projects" className="section section--alt">
+      <div className="container">
+        <SectionHead
+          kicker="Projects"
+          title={<>Things I've <span className="gradient-text">built</span></>}
+          sub="Production apps at Trusted Technologies, my final year project, and earlier web work."
+        />
+        <div className="projects">
+          {projects.map((p, i) => (
+            <article
+              key={p.name}
+              className={`project card spotlight hoverable ripple ${p.featured ? 'project--featured' : ''}`}
+              data-reveal="up"
+              style={{ '--delay': `${(i % 3) * 110}ms` }}
+              {...tiltHandlers(7)}
+            >
+              <div className="project__top">
+                <span className="icon-badge icon-badge--lg"><Icon name={p.icon} size={26} /></span>
+                <span className="project__year">{p.year}</span>
+              </div>
+              <p className="project__kind">{p.kind}</p>
+              <h3 className="project__name">{p.name}</h3>
+              <p className="project__desc">{p.description}</p>
+              <ul className="tags tags--sm">
+                {p.tags.map((t) => <li key={t} className="tag">{t}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Education() {
+  return (
+    <section id="education" className="section">
+      <div className="container">
+        <SectionHead kicker="Education" title={<>Learning &amp; <span className="gradient-text">credentials</span></>} />
+        <div className="edu">
+          <article className="edu__card card spotlight hoverable" data-reveal="left" {...tiltHandlers(5)}>
+            <span className="icon-badge icon-badge--lg"><Icon name="cap" size={26} /></span>
+            <div>
+              <span className="pill">{education.period}</span>
+              <h3>{education.degree}</h3>
+              <p className="edu__school">{education.school}, {education.place}</p>
+              <p className="edu__label">Relevant coursework</p>
+              <ul className="tags tags--sm">
+                {education.coursework.map((c) => <li key={c} className="tag">{c}</li>)}
+              </ul>
+            </div>
+          </article>
+          {certifications.map((c) => (
+            <article key={c.name} className="edu__card card spotlight hoverable" data-reveal="right" {...tiltHandlers(5)}>
+              <span className="icon-badge icon-badge--lg"><Icon name="award" size={26} /></span>
+              <div>
+                <span className="pill">{c.date}</span>
+                <h3>{c.name}</h3>
+                <p className="edu__school">{c.issuer}</p>
+                <p className="edu__label">Certification</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Contact() {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    } catch {
+      window.location.href = `mailto:${profile.email}`
+    }
+  }
+  const links = [
+    { icon: 'mail', label: 'Email', value: profile.email, href: `mailto:${profile.email}` },
+    { icon: 'linkedin', label: 'LinkedIn', value: profile.linkedinLabel, href: profile.linkedin },
+    { icon: 'github', label: 'GitHub', value: profile.githubLabel, href: profile.github },
+    { icon: 'pin', label: 'Location', value: profile.location },
+  ]
+  return (
+    <section id="contact" className="section contact">
+      <div className="contact__glow" />
+      <div className="container">
+        <SectionHead
+          kicker="Contact"
+          title={<>Let's build something <span className="gradient-text">great</span></>}
+          sub="Have an Android or web project, or a role in mind? My inbox is open."
+        />
+        <div className="contact__grid">
+          {links.map((l, i) => {
+            const Tag = l.href ? 'a' : 'div'
+            const ext = l.href && l.href.startsWith('http')
+            return (
+              <Tag
+                key={l.label}
+                className="contact-card card spotlight hoverable ripple"
+                data-reveal="up"
+                style={{ '--delay': `${i * 90}ms` }}
+                {...(l.href ? { href: l.href } : {})}
+                {...(ext ? { target: '_blank', rel: 'noreferrer' } : {})}
+                {...tiltHandlers(6)}
+              >
+                <span className="icon-badge"><Icon name={l.icon} size={22} /></span>
+                <span className="contact-card__label">{l.label}</span>
+                <span className="contact-card__value">{l.value}</span>
+              </Tag>
+            )
+          })}
+        </div>
+        <div className="contact__cta" data-reveal="zoom">
+          <a href={`mailto:${profile.email}`} className="btn btn--primary btn--lg ripple magnetic">
+            <Icon name="mail" size={20} /> Say hello
+          </a>
+          <button type="button" className="btn btn--ghost btn--lg ripple magnetic" onClick={copy}>
+            <Icon name={copied ? 'check' : 'copy'} size={20} /> {copied ? 'Email copied' : 'Copy email'}
+          </button>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <div className="container footer__inner">
+        <p>© {new Date().getFullYear()} {profile.name}. Built with React.</p>
+        <div className="footer__social">
+          <a href={profile.github} target="_blank" rel="noreferrer" aria-label="GitHub"><Icon name="github" size={18} /></a>
+          <a href={profile.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"><Icon name="linkedin" size={18} /></a>
+          <a href={`mailto:${profile.email}`} aria-label="Email"><Icon name="mail" size={18} /></a>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+function ProgressAndTop() {
+  const p = useScrollProgress()
+  return (
+    <>
+      <div className="progress" style={{ transform: `scaleX(${p})` }} aria-hidden="true" />
+      <a href="#home" className={`to-top ripple ${p > 0.08 ? 'is-shown' : ''}`} aria-label="Back to top">
+        <svg viewBox="0 0 48 48" className="to-top__ring" aria-hidden="true">
+          <circle cx="24" cy="24" r="21" pathLength="100" style={{ strokeDashoffset: 100 - p * 100 }} />
+        </svg>
+        <Icon name="up" size={18} />
+      </a>
+    </>
+  )
+}
+
+/* Buttons drift slightly toward the pointer. */
+function useMagnetic() {
+  useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    const els = document.querySelectorAll('.magnetic')
+    const cleanups = []
+    els.forEach((el) => {
+      const move = (e) => {
+        const r = el.getBoundingClientRect()
+        const x = e.clientX - r.left - r.width / 2
+        const y = e.clientY - r.top - r.height / 2
+        el.style.translate = `${x * 0.18}px ${y * 0.25}px`
+      }
+      const leave = () => (el.style.translate = '')
+      el.addEventListener('pointermove', move)
+      el.addEventListener('pointerleave', leave)
+      cleanups.push(() => {
+        el.removeEventListener('pointermove', move)
+        el.removeEventListener('pointerleave', leave)
+      })
+    })
+    return () => cleanups.forEach((c) => c())
+  }, [])
+}
+
+export default function App() {
+  useScrollReveal()
+  useGlobalRipple()
+  useMagnetic()
+  return (
+    <>
+      <Loader />
+      <CursorGlow />
+      <ProgressAndTop />
+      <Nav />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Experience />
+        <Projects />
+        <Education />
+        <Contact />
+      </main>
+      <Footer />
+    </>
+  )
+}
