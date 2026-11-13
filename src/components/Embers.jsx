@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 /* Glowing ember particles drifting upward, echoing the photo's orange sparks. */
-export default function Embers({ density = 45 }) {
+export default function Embers({ density = 70 }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -39,6 +39,14 @@ export default function Embers({ density = 45 }) {
         p.tw += 0.03
         p.y -= p.vy
         p.x += p.vx + Math.sin(p.tw) * 0.15
+        const dx = p.x - mouse.x
+        const dy = p.y - mouse.y
+        const d2 = dx * dx + dy * dy
+        if (d2 < 9000) {
+          const f = (9000 - d2) / 9000
+          p.x += (dx / Math.sqrt(d2 + 1)) * f * 2
+          p.y += (dy / Math.sqrt(d2 + 1)) * f * 2
+        }
         if (p.y < -10 || p.x < -10 || p.x > w + 10) Object.assign(p, make(true))
         const alpha = p.a * (0.6 + 0.4 * Math.sin(p.tw))
         const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4)

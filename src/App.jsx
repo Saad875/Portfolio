@@ -10,15 +10,16 @@ import {
 } from './hooks.js'
 
 const NAV = [
+  { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
-  { id: 'apps', label: 'Apps' },
   { id: 'skills', label: 'Skills' },
+  { id: 'apps', label: 'Apps' },
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'education', label: 'Education' },
   { id: 'contact', label: 'Contact' },
 ]
-const NAV_IDS = ['home', ...NAV.map((n) => n.id)]
+const NAV_IDS = NAV.map((n) => n.id)
 
 function Loader() {
   const [done, setDone] = useState(false)
@@ -88,7 +89,7 @@ function Nav() {
 
 function Hero() {
   const typed = useTypewriter(profile.roles)
-  const tilt = tiltHandlers(5)
+  const tilt = tiltHandlers(10)
   return (
     <section id="home" className="hero">
       <Embers />
@@ -113,10 +114,10 @@ function Hero() {
             AI-assisted development, and bring a React front-end background to every interface.
           </p>
           <div className="hero__actions hero-in" style={{ '--d': '1.8s' }}>
-            <a href="#projects" className="btn btn--primary ripple">
+            <a href="#projects" className="btn btn--primary ripple magnetic">
               View my work <Icon name="arrow" size={18} />
             </a>
-            <a href={profile.cv} download className="btn btn--ghost ripple">
+            <a href={profile.cv} download className="btn btn--ghost ripple magnetic">
               <Icon name="download" size={18} /> Download CV
             </a>
           </div>
@@ -173,7 +174,7 @@ function SectionHead({ kicker, title, sub }) {
 function Stat({ value, suffix, label, i }) {
   const [ref, v] = useCountUp(value)
   return (
-    <div className="stat card spotlight hoverable" data-reveal="zoom" style={{ '--delay': `${i * 90}ms` }} ref={ref}>
+    <div className="stat card spotlight hoverable" data-reveal="zoom" style={{ '--delay': `${i * 90}ms` }} ref={ref} {...tiltHandlers(8)}>
       <span className="stat__num">{v}{suffix}</span>
       <span className="stat__label">{label}</span>
     </div>
@@ -227,6 +228,7 @@ function PlayApps() {
               className="play-app card spotlight hoverable ripple"
               data-reveal="up"
               style={{ '--delay': `${i * 120}ms` }}
+              {...tiltHandlers(8)}
             >
               <div className="play-app__top">
                 <img className="play-app__icon" src={a.icon} alt={`${a.name} app icon`} width="72" height="72" loading="lazy" />
@@ -251,7 +253,7 @@ function PlayApps() {
             </a>
           ))}
         </div>
-        <div className="company card spotlight hoverable" data-reveal="up">
+        <div className="company card spotlight hoverable" data-reveal="up" {...tiltHandlers(4)}>
           <span className="icon-badge icon-badge--lg"><Icon name="briefcase" size={26} /></span>
           <div className="company__text">
             <p className="company__label">Built at</p>
@@ -284,6 +286,7 @@ function Skills() {
               className="skill-card card spotlight hoverable"
               data-reveal="up"
               style={{ '--delay': `${(i % 3) * 110}ms` }}
+              {...tiltHandlers(6)}
             >
               <div className="skill-card__head">
                 <span className="icon-badge"><Icon name={g.icon} size={22} /></span>
@@ -320,7 +323,7 @@ function Experience() {
           {experience.map((job, i) => (
             <li key={job.role} className="timeline__item" data-reveal={i % 2 ? 'right' : 'left'}>
               <span className={`timeline__dot ${job.current ? 'is-current' : ''}`} />
-              <article className="job card spotlight hoverable">
+              <article className="job card spotlight hoverable" {...tiltHandlers(3)}>
                 <header className="job__head">
                   <div>
                     <h3>{job.role}</h3>
@@ -361,6 +364,7 @@ function Projects() {
               className={`project card spotlight hoverable ripple ${p.featured ? 'project--featured' : ''}`}
               data-reveal="up"
               style={{ '--delay': `${(i % 3) * 110}ms` }}
+              {...tiltHandlers(7)}
             >
               <div className="project__top">
                 <span className="icon-badge icon-badge--lg"><Icon name={p.icon} size={26} /></span>
@@ -386,7 +390,7 @@ function Education() {
       <div className="container">
         <SectionHead kicker="Education" title={<>Learning &amp; <span className="gradient-text">credentials</span></>} />
         <div className="edu">
-          <article className="edu__card card spotlight hoverable" data-reveal="left">
+          <article className="edu__card card spotlight hoverable" data-reveal="left" {...tiltHandlers(5)}>
             <span className="icon-badge icon-badge--lg"><Icon name="cap" size={26} /></span>
             <div>
               <span className="pill">{education.period}</span>
@@ -399,7 +403,7 @@ function Education() {
             </div>
           </article>
           {certifications.map((c) => (
-            <article key={c.name} className="edu__card card spotlight hoverable" data-reveal="right">
+            <article key={c.name} className="edu__card card spotlight hoverable" data-reveal="right" {...tiltHandlers(5)}>
               <span className="icon-badge icon-badge--lg"><Icon name="award" size={26} /></span>
               <div>
                 <span className="pill">{c.date}</span>
@@ -453,6 +457,7 @@ function Contact() {
                 style={{ '--delay': `${i * 90}ms` }}
                 {...(l.href ? { href: l.href } : {})}
                 {...(ext ? { target: '_blank', rel: 'noreferrer' } : {})}
+                {...tiltHandlers(6)}
               >
                 <span className="icon-badge"><Icon name={l.icon} size={22} /></span>
                 <span className="contact-card__label">{l.label}</span>
@@ -462,10 +467,10 @@ function Contact() {
           })}
         </div>
         <div className="contact__cta" data-reveal="zoom">
-          <a href={`mailto:${profile.email}`} className="btn btn--primary btn--lg ripple">
+          <a href={`mailto:${profile.email}`} className="btn btn--primary btn--lg ripple magnetic">
             <Icon name="mail" size={20} /> Say hello
           </a>
-          <button type="button" className="btn btn--ghost btn--lg ripple" onClick={copy}>
+          <button type="button" className="btn btn--ghost btn--lg ripple magnetic" onClick={copy}>
             <Icon name={copied ? 'check' : 'copy'} size={20} /> {copied ? 'Email copied' : 'Copy email'}
           </button>
         </div>
@@ -504,9 +509,35 @@ function ProgressAndTop() {
   )
 }
 
+/* Buttons drift slightly toward the pointer. */
+function useMagnetic() {
+  useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    const els = document.querySelectorAll('.magnetic')
+    const cleanups = []
+    els.forEach((el) => {
+      const move = (e) => {
+        const r = el.getBoundingClientRect()
+        const x = e.clientX - r.left - r.width / 2
+        const y = e.clientY - r.top - r.height / 2
+        el.style.translate = `${x * 0.18}px ${y * 0.25}px`
+      }
+      const leave = () => (el.style.translate = '')
+      el.addEventListener('pointermove', move)
+      el.addEventListener('pointerleave', leave)
+      cleanups.push(() => {
+        el.removeEventListener('pointermove', move)
+        el.removeEventListener('pointerleave', leave)
+      })
+    })
+    return () => cleanups.forEach((c) => c())
+  }, [])
+}
+
 export default function App() {
   useScrollReveal()
   useGlobalRipple()
+  useMagnetic()
   return (
     <>
       <Loader />

@@ -24,10 +24,10 @@ export const profile = {
 }
 
 export const stats = [
-  { value: 20, suffix: 'K+', label: 'Downloads on Google Play' },
-  { value: 3, suffix: '', label: 'Apps live on the Play Store' },
-  { value: 5, suffix: '', label: 'Production apps shipped' },
-  { value: 18, suffix: '', label: 'Languages localized' },
+  { value: 20, suffix: 'K+', label: 'Downloads on Google Play across my published apps' },
+  { value: 3, suffix: '', label: 'Apps live on Google Play, built at Trusted Technologies' },
+  { value: 5, suffix: '', label: 'Production Android apps shipped in Kotlin' },
+  { value: 18, suffix: '', label: 'Languages localized, including Arabic RTL' },
 ]
 
 export const company = {
