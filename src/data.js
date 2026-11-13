@@ -24,10 +24,51 @@ export const profile = {
 }
 
 export const stats = [
-  { value: 18, suffix: '', label: 'Languages localized, incl. Arabic RTL' },
-  { value: 46, suffix: '', label: 'App screens designed with Google Stitch' },
-  { value: 3, suffix: '', label: 'App categories shipped: utility, productivity, AI' },
-  { value: 4, suffix: '', label: 'Years of Computer Science at UMT' },
+  { value: 20, suffix: 'K+', label: 'Downloads on Google Play across my published apps' },
+  { value: 3, suffix: '', label: 'Apps live on Google Play, built at Trusted Technologies' },
+  { value: 5, suffix: '', label: 'Production Android apps shipped in Kotlin' },
+  { value: 18, suffix: '', label: 'Languages localized, including Arabic RTL' },
+]
+
+export const company = {
+  name: 'Trusted Technologies',
+  place: 'Lahore, Pakistan',
+  role: 'Junior Android Developer',
+  since: 'Feb 2026 – Present',
+}
+
+// Numbers read from the Google Play listings on 13 Nov 2026.
+export const playApps = [
+  {
+    name: 'Smart Printer : All Documents',
+    downloads: '10K+',
+    category: 'Productivity · Printing',
+    description:
+      'Print PDFs, documents, photos, web pages and email attachments straight from the phone over Wi-Fi, with print preview and print settings.',
+    features: ['WiFi / Bluetooth / USB discovery', 'IPP printing', 'eSCL scanning'],
+    icon: 'https://play-lh.googleusercontent.com/Q3KL08N-Ns2GzVpZNybXTTjtvEbyOknMRCk13lCmM_Q1okUXLxrhCIh_1Q7W1QV6bC0LW-gN4UTSPIEpR2hO=w240-h480-rw',
+    url: 'https://play.google.com/store/apps/details?id=smartprinter.printdocuments.mobileprint.wirelessprinting',
+  },
+  {
+    name: 'Universal TV Remote: Smart TV',
+    downloads: '5K+',
+    category: 'Utility · Smart TV',
+    description:
+      'Turns the phone into a remote for compatible smart TVs over Wi-Fi: navigation, volume and playback controls.',
+    features: ['Wi-Fi device pairing', 'Remote controls', 'Volume & playback'],
+    icon: 'https://play-lh.googleusercontent.com/xZ9WYY68EPqB6BMTV6GVs7nfbES0X9fFJezQGgCdOHOdWFdTvWHh5yYYft4lt9RwjlptB5hYU3831apCntAS=w240-h480-rw',
+    url: 'https://play.google.com/store/apps/details?id=com.universal.tv.remote.control.cast.screen',
+  },
+  {
+    name: '4K Wallpapers + HD Backgrounds',
+    downloads: '5K+',
+    category: 'Personalization',
+    description:
+      'A collection of 4K and HD wallpapers in many styles to set on the home screen, lock screen or both.',
+    features: ['4K & HD wallpapers', 'Home & lock screen', 'Style categories'],
+    icon: 'https://play-lh.googleusercontent.com/VqaRwy-U_BgAU5Hi80K6yO1RN5xpOWfqMVeSgxXT6G0Fs5zlVus3dSGLjsLU-ryko2FsJjOS5OjjrXKtkm1_fw=w240-h480-rw',
+    url: 'https://play.google.com/store/apps/details?id=uhd.hdwallpapers.live.wallpaper4k.backgrounds',
+  },
 ]
 
 export const skills = [
@@ -110,15 +151,6 @@ export const experience = [
 ]
 
 export const projects = [
-  {
-    name: 'Printer & Scanner App',
-    kind: 'Android · Trusted Technologies',
-    year: '2026',
-    description:
-      'Key features for a production printer & scanner app: device discovery over WiFi, Bluetooth and USB, IPP printing and eSCL scanning.',
-    tags: ['Kotlin', 'IPP', 'eSCL', 'Bluetooth', 'USB'],
-    icon: 'printer',
-  },
   {
     name: 'Family-Safety App',
     kind: 'Android · Trusted Technologies',

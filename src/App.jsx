@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Icon from './components/Icon.jsx'
 import Embers from './components/Embers.jsx'
 import {
-  profile, stats, skills, languages, experience, projects, education, certifications,
+  profile, stats, skills, languages, experience, projects, education, certifications, playApps, company,
 } from './data.js'
 import {
   useScrollReveal, useGlobalRipple, useTypewriter, useCountUp, tiltHandlers,
@@ -13,6 +13,7 @@ const NAV = [
   { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
   { id: 'skills', label: 'Skills' },
+  { id: 'apps', label: 'Apps' },
   { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'education', label: 'Education' },
@@ -136,7 +137,7 @@ function Hero() {
       <div className="container hero__grid">
         <div className="hero__copy">
           <p className="eyebrow hero-in" style={{ '--d': '1.2s' }}>
-            <span className="pulse-dot" /> Android Developer · {profile.location}
+            <span className="pulse-dot" /> Android Developer at {company.name} · {profile.location}
           </p>
           <h1 className="hero__title">
             <span className="hero-in line" style={{ '--d': '1.3s' }}>Hi, I'm</span>
@@ -183,7 +184,7 @@ function Hero() {
               <Icon name="android" size={18} /> Kotlin · Android
             </div>
             <div className="chip-float chip-float--2">
-              <Icon name="spark" size={18} /> AI-assisted dev
+              <Icon name="download" size={18} /> 20K+ Play downloads
             </div>
             <div className="chip-float chip-float--3">
               <Icon name="layout" size={18} /> React
@@ -209,11 +210,11 @@ function SectionHead({ kicker, title, sub }) {
   )
 }
 
-function Stat({ value, label, i }) {
+function Stat({ value, suffix, label, i }) {
   const [ref, v] = useCountUp(value)
   return (
     <div className="stat card spotlight hoverable" data-reveal="zoom" style={{ '--delay': `${i * 90}ms` }} ref={ref} {...tiltHandlers(8)}>
-      <span className="stat__num">{v}</span>
+      <span className="stat__num">{v}{suffix}</span>
       <span className="stat__label">{label}</span>
     </div>
   )
@@ -247,9 +248,70 @@ function About() {
   )
 }
 
+function PlayApps() {
+  return (
+    <section id="apps" className="section section--alt">
+      <div className="container">
+        <SectionHead
+          kicker="Live on Google Play"
+          title={<>Apps people <span className="gradient-text">actually use</span></>}
+          sub="Published Android apps I built in Kotlin, with 20K+ downloads between them."
+        />
+        <div className="play-apps">
+          {playApps.map((a, i) => (
+            <a
+              key={a.url}
+              href={a.url}
+              target="_blank"
+              rel="noreferrer"
+              className="play-app card spotlight hoverable ripple"
+              data-reveal="up"
+              style={{ '--delay': `${i * 120}ms` }}
+              {...tiltHandlers(8)}
+            >
+              <div className="play-app__top">
+                <img className="play-app__icon" src={a.icon} alt={`${a.name} app icon`} width="72" height="72" loading="lazy" />
+                <div className="play-app__dl">
+                  <strong>{a.downloads}</strong>
+                  <span>downloads</span>
+                </div>
+              </div>
+              <p className="project__kind">{a.category}</p>
+              <h3 className="play-app__name">{a.name}</h3>
+              <p className="play-app__desc">{a.description}</p>
+              <ul className="tags tags--sm">
+                {a.features.map((f) => <li key={f} className="tag">{f}</li>)}
+              </ul>
+              <span className="play-app__cta">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path fill="currentColor" d="M3.6 1.8 13.8 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1Zm11.3 11.3 2.4 2.4-11.2 6.4 8.8-8.8Zm3.6-3.6 2.6 1.5c.8.5.8 1.6 0 2.1l-2.6 1.5-2.7-2.6 2.7-2.5ZM6.1 2.1l11.2 6.4-2.4 2.4-8.8-8.8Z" />
+                </svg>
+                Get it on Google Play
+                <Icon name="arrow" size={16} />
+              </span>
+            </a>
+          ))}
+        </div>
+        <div className="company card spotlight hoverable" data-reveal="up" {...tiltHandlers(4)}>
+          <span className="icon-badge icon-badge--lg"><Icon name="briefcase" size={26} /></span>
+          <div className="company__text">
+            <p className="company__label">Built at</p>
+            <h3>{company.name}</h3>
+            <p className="company__meta">{company.role} · {company.place} · {company.since}</p>
+          </div>
+          <p className="company__note">
+            I build and ship these apps end to end in Kotlin and XML, from R&amp;D and UI to QA-ready releases,
+            with Firebase, AdMob, Crashlytics and localization built in.
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Skills() {
   return (
-    <section id="skills" className="section section--alt">
+    <section id="skills" className="section">
       <div className="container">
         <SectionHead
           kicker="Skills"
@@ -293,7 +355,7 @@ function Skills() {
 
 function Experience() {
   return (
-    <section id="experience" className="section">
+    <section id="experience" className="section section--alt">
       <div className="container">
         <SectionHead kicker="Experience" title={<>Where I've <span className="gradient-text">worked</span></>} />
         <ol className="timeline">
@@ -327,12 +389,12 @@ function Experience() {
 
 function Projects() {
   return (
-    <section id="projects" className="section section--alt">
+    <section id="projects" className="section">
       <div className="container">
         <SectionHead
           kicker="Projects"
           title={<>Things I've <span className="gradient-text">built</span></>}
-          sub="Production apps at Trusted Technologies, my final year project, and earlier web work."
+          sub="More work from Trusted Technologies, my final year project, and earlier web work."
         />
         <div className="projects">
           {projects.map((p, i) => (
@@ -363,7 +425,7 @@ function Projects() {
 
 function Education() {
   return (
-    <section id="education" className="section">
+    <section id="education" className="section section--alt">
       <div className="container">
         <SectionHead kicker="Education" title={<>Learning &amp; <span className="gradient-text">credentials</span></>} />
         <div className="edu">
@@ -524,6 +586,7 @@ export default function App() {
       <main>
         <Hero />
         <About />
+        <PlayApps />
         <Skills />
         <Experience />
         <Projects />
